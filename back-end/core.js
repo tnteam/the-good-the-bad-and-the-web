@@ -11,11 +11,11 @@ requirejs.config({
     nodeRequire: require
 });
 
-requirejs(['entities'],
-function   (entities) {
+requirejs(['entities','players','underscore'],
+function   (entities,players,underscore) {
     //foo and bar are loaded according to requirejs
     //config, but if not found, then node's require
     //is used to load the module.
-    var a = new entities.entity();
 
+    var entity = entities.Entity()
 });
