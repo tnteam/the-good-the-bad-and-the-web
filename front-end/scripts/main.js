@@ -4,8 +4,8 @@
 
 require.config({
     paths: {
-        entities: '/back-end/entities',
-        players: '/back-end/players'
+        entities: '/back-end/entities.js',
+        players: '/back-end/players.js'
     }
 });
 
