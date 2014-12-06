@@ -4,12 +4,12 @@
 
 require.config({
     paths: {
-        entities: '/back-end/entities.js',
-        players: '/back-end/players.js'
+        entities: '/back-end/entities',
+        players: '/back-end/players'
     }
 });
 
-require(['entities', 'players'], function(entities,players) {
+define(['entities', 'players'], function(entities,players) {
     var data = {
         name: 'Master',
         x:0,
