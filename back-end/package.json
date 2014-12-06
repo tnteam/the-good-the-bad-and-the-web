@@ -1,0 +1,7 @@
+{
+  "name": "the-good-the-bad-and-the-web-back-end",
+  "version": "0.0.1",
+  "license": "GPL",
+  "dependencies" : {"requirejs" : "latest"}
+
+}
