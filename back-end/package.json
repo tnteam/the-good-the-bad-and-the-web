@@ -2,6 +2,12 @@
   "name": "the-good-the-bad-and-the-web-back-end",
   "version": "0.0.1",
   "license": "GPL",
-  "dependencies" : {"requirejs" : "latest"}
-
+  "description": "A Wargame to educate about the problems of privacy on internet",
+  "repository": "https://github.com/TNTeam/the-good-the-bad-and-the-web",
+  "dependencies": {
+    "requirejs": "latest"
+  },
+  "devDependencies": {
+    "jasmine": "^2.1.1"
+  }
 }
