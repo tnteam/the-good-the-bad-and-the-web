@@ -17,5 +17,5 @@ function   (entities,players,underscore) {
     //config, but if not found, then node's require
     //is used to load the module.
 
-    var entity = entities.Entity()
+    var entity = entities.Entity();
 });
