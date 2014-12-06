@@ -21,6 +21,7 @@ var data = {
     webmana:20,
     his_player_id:10
 };
+
 player.createEntity(data);
 console.log(player.entities);
 
