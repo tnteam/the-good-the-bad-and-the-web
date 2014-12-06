@@ -3,9 +3,10 @@
  */
 
 require.config({
+    baseUrl: '/backe-end/',
     paths: {
-        entities: '/back-end/entities',
-        players: '/back-end/players'
+        entities: 'entities',
+        players: 'players'
     }
 });
 
