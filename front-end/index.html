@@ -1,25 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script src="http://franciscodias.net:8120/socket.io/socket.io.js"></script>
+    <script src="scripts/players.js"></script>
     <script src="scripts/entities.js"></script>
     <script>
-        var entities;
-        var player = new Player({entities:[], player_id:5});
-        var data = {
-            name: 'Master',
-            x:0,
-            y:0,
-            is_serverp:true,
-            is_goodp:true,
-            aptitudes:[],
-            vulnerabilities:[],
-            webmana:20,
-            his_player_id:10
-        };
-
-
-
+        var socket;
     </script>
+    <script src="scripts/main.js"></script>
 </head>
 <body>
 

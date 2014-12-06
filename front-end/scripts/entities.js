@@ -2,6 +2,7 @@
  * Created by ibtissem on 06/12/14.
  */
 
+
 var Entity = function(parameters){
 
     this.name = parameters.name;
@@ -25,13 +26,13 @@ var Entity = function(parameters){
      */
     this.isgoodp = parameters.isgoodp;
     this.is_good = function() {
-        return isgoodp;}
+        return isgoodp;
+    }
     this.is_bad = function(){
-        return !isgoodp;}
-
+        return !isgoodp;
+    }
 
     this.aptitudes = parameters.aptitudes;
-
     /*
      add vulnerability
      remove vulnearbility
