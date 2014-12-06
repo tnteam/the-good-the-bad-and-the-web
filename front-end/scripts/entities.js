@@ -41,27 +41,7 @@ var Entity = function(parameters){
     this.his_player_id = parameters.his_player_id;
 };
 
-Entity.prototype.move = function(xp, yp) {
-    this.x = xp;
-    this.y = yp;
-}
 
-Entity.prototype.buyaptitudes = function(bought_aptitude) {
-    if (this.webmana>bought_aptitude.price) {
-        //TODO verif bought not exists
-        this.aptitudes.push(bought_aptitude);
-        return true;
-    } else return false;
-}
-
-Entity.prototype.addvulnerability = function(added_vuln) {
-    var exists = _.some(this.vulnerabilities,
-        function(vuln) {
-            return (vuln.name == added_vuln.name)});
-    //TODO verif added not exists
-    this.vulnerabilities.push(added_vuln);
-    return true;
-}
 
 /*
  webmana
