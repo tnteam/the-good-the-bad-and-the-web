@@ -42,6 +42,15 @@ var Entity = function(parameters){
 };
 
 
+/**
+ * Move entity
+ * @param xp
+ * @param yp
+ */
+Entity.prototype.move = function(xp,yp) {
+    this.x= this.xp;
+    this.y = this.yp;
+};
 
 /*
  webmana
@@ -58,6 +67,10 @@ var Connection = function (parameters)
     this.source = parameters.source;
     this.target  = parameters.target;
 };
+
+Connection.prototype.openConnection = function(parameters){
+
+}
 
 /**
  * aptitude declaration
@@ -94,8 +107,10 @@ var Attack = function(parameters) {
 };
 
 var Aptitude_w_Aptitude = function (apt1,apt2){
-    this.aptitude1 = apt1, this.aptitude2 = apt2 };
+    this.aptitude1 = apt1, this.aptitude2 = apt2
+};
 
 var Aptitude_w_Vulnerability = function (vuln1,vuln2){
     this.vulnerability1 = vuln1;
-    this.vulnerability2 = vuln2 ;}
+    this.vulnerability2 = vuln2 ;
+}

@@ -112,7 +112,7 @@ define(function () {
         Aptitude_w_Aptitude : function (apt1,apt2)
         { this.aptitude1 = apt1, this.aptitude2 = apt2 },
         Aptitude_w_Vulnerability : function (vuln1,vuln2)
-        { this.vulnerability1 = vuln1, this.vulnerability2 = vuln2 },
+        { this.vulnerability1 = vuln1, this.vulnerability2 = vuln2 }
 
     };
 });

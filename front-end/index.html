@@ -3,6 +3,8 @@
 <head>
     <script src="scripts/entities.js"></script>
     <script>
+        var entities;
+        var player = new Player({entities:[], player_id:5});
         var data = {
             name: 'Master',
             x:0,
@@ -14,10 +16,9 @@
             webmana:20,
             his_player_id:10
         };
-        var entity = new Entity(data);
-        console.log("Old values: ", entity.x, entity.y);
-        entity.move(1, 2);
-        console.log("New values: ", entity.x, entity.y);
+
+
+
     </script>
 </head>
 <body>
