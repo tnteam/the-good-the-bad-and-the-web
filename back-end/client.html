@@ -2,7 +2,7 @@
 <script>
     io = io.connect()
 
-    // Emit ready event.
+
     io.emit('player:register',{
                 name: "rafikplayer",
                 entities:[],
@@ -11,6 +11,12 @@
               });
 
 
+    io.emit('player:register',{
+        name: "elyesplayer",
+        entities:[],
+        game_id: "game1",
+        webmana: 20
+    });
     // result : event : entity:add, {result : true, name ; rafikentity}
 
 
@@ -30,13 +36,24 @@
         his_player_id:"rafikplayer"
     });
 
+    io.emit('entity:add',{name:"elyesentity",
+        x:10,
+        y:20,
+        is_serverp : true,
+        is_goodp : false,
+        aptitudes :[],
+        vulnerabilities:[],
+        webmana:5,
+        his_player_id:"elyesplayer"
+    });
+
     io.on('entity:add',function(data) {
             console.log("entity add:" + JSON.stringify(data));
         })
 
     io.emit('entity:move',{his_player_id :'rafikplayer',
         name:'rafikentity',
-        x:10, y:15})
+        x:140, y:150})
 
     io.on('entity:move', function(data) {
         console.log("entity move:" + JSON.stringify((data)));
@@ -44,7 +61,8 @@
 
     })
 
-    io.emit('entity:list_aptitudes',{target_player_id:'rafikplayer',target_entity_id:'rafikentity'})
+    io.emit('entity:list_aptitudes',{target_player_id:'rafikplayer',target_entity_id:'rafikentity'});
+
     io.on('entity:list_aptitudes',function(data){
         console.log("entity:list_aptitudes"+JSON.stringify(data));
     });
@@ -54,9 +72,27 @@
         console.log("entity:list_vulnerabilities"+JSON.stringify(data));
     });
 
-    io.emit('entity:buy_aptitude', {his_player_id:'rafikplayer', his_entity_id:'rafikentity',aptitude_id:'buy_stuff'});
+    io.emit('entity:buy_aptitude', {his_player_id:'rafikplayer', his_entity_id:'rafikentity',aptitude_id:'steal_sensitive_data'});
+
+    io.emit('entity:buy_aptitude', {his_player_id:'elyesplayer', his_entity_id:'elyesentity',aptitude_id:'user_use_gpg'});
+
     io.on('entity:buy_aptitude', function(data) {
         console.log("entiry:buy_aptitudes"+JSON.stringify(data));
-    })
+    });
+
+    io.emit('entity:attack',
+            {source_player_id : 'rafikplayer',
+        source_entity_id : 'rafikentity',
+        source_aptitude_id : 'steal_sensitive_data',
+        target_player_id : 'elyesplayer',
+        target_entity_id : 'elyesentity',
+        target_vulnerability_id : 'user_not_crypting_emails'
+
+    });
+
+    io.on('entity:attack', function(data) {
+        console.log("entity:attack"+JSON.stringify(data));
+    });
+
 
 </script>

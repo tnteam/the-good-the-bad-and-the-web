@@ -36,7 +36,7 @@ var setEventHandlers = function() {
 
     socket.on("entity ennemies", player.updateEnemyEntities);
 
-    socket.on("move entity", player.updateEnemyEntity);
+    socket.on("move_to_coords entity", player.updateEnemyEntity);
 
     socket.on("new entity", player.addNewEnemyEntity);
 

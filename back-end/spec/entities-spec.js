@@ -26,7 +26,7 @@ describe("Entites Test Suite", function() {
 
 
     it("moving, coords must be right", function(){
-        ent.move(4,5);
+        ent.move_to_coords(4,5);
         expect(ent.x).toBe(4);
     });
 

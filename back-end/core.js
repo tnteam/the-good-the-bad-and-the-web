@@ -10,9 +10,9 @@ var utils = require('utils');
 
 var app = require('express.io')();
 var board = new game.Board();
-var  rules = new game_data.init_data();
+var rules = new game_data.init_data();
 
-process.on('uncaughtException', function(err) {
+process.on('uncaughtException', function (err) {
     // handle the error safely
     console.log(err);
 });
@@ -24,11 +24,9 @@ app.io.route('player', {
     register: function (req) {
         var params = req.data;
         var player = new players.Player(params);
-        var result = board.add_a_thing(board.players, player);
-        var response = {result: result, data: utils.transform_obj_to_name(player,'entities')};
-
-
-        app.io.broadcast('player:register', response)
+        var result = board.add_player(player);
+        var response = {result: result, data: utils.transform_obj_to_name(player, 'entities')};
+        app.io.broadcast('player:register', response);
     }
 });
 
@@ -36,29 +34,29 @@ app.io.route('entity', {
     add: function (req) {
         var params = req.data;
         var his_player_id = params.his_player_id;
-
         var his_player = _.find(board.players, function (pl) {
             return (pl.name == his_player_id);
-        })
+        });
 
         var result = false;
         var response = {};
-        var entity_name = params.name
+        var entity_name = params.name;
 
-        var exist_entity = _.some(board.all_entities(),function(ent) {return ent.name == entity_name});
+        var exist_entity = _.some(board.all_entities(), function (ent) {
+            return ent.name == entity_name
+        });
 
         if (his_player && !exist_entity) {
-            params.vulnerabilities = _.sample(rules.all_vulnerabilities(),3);
+            params.vulnerabilities = _.sample(rules.all_vulnerabilities(), 3);
 
             var new_entity = new entities.Entity(params);
             result = his_player.add_entity(new_entity);
+
 
             if (result) {
                 var ent_t_apts = utils.transform_obj_to_name(new_entity, 'aptitudes');
                 var response_data = utils.transform_obj_to_name(ent_t_apts, 'vulnerabilities');
                 response = {result: result, data: response_data};
-                board.remove_a_thing(board.players, his_player);
-                board.add_a_thing(board.players, his_player);
             }
         }
 
@@ -75,7 +73,7 @@ app.io.route('entity', {
         var params = req.data;
         var entity_name = params.name;
         var result = false;
-        var response;
+        var response = {};
         var his_player_id = params.his_player_id;
 
         var the_player = _.find(board.players, function (pl) {
@@ -87,9 +85,9 @@ app.io.route('entity', {
         // the entity belongs to this player
         if (the_entity) {
             result = true;
-            the_entity.move(params.x, params.y);
-            board.remove_a_thing(the_player.entities, the_entity);
-            board.add_a_thing(the_player.entities, the_entity);
+            the_entity.move_to_coords(params.x, params.y);
+            console.log('new coords :' + the_entity.x + ',' + the_entity.y);
+
         }
         var ent_t_apts = utils.transform_obj_to_name(the_entity, 'aptitudes');
         var response_data = utils.transform_obj_to_name(ent_t_apts, 'vulnerabilities');
@@ -97,38 +95,60 @@ app.io.route('entity', {
         response = {result: result, data: response_data};
 
         app.io.broadcast('entity:move', response);
+
     },
 
-    list_aptitudes: function(req){
+    list_aptitudes: function (req) {
         var params = req.data;
         var target_player_id = params.target_player_id;
         var target_entity_id = params.target_entity_id;
-        var the_player = _.find(board.players,function(pl){return(pl.name == target_player_id)});
-        var the_entity = _.find(the_player.entities,function(el) {return (el.name == target_entity_id)});
-        var aptitudes= _.map(the_entity.aptitudes,function(apt) {return (apt.name)});
-        if (aptitudes)
-        {response = {result:true, target_player_id:target_player_id,
-            target_entity_id:target_entity_id,
-            aptitudes:aptitudes}}
-            else response = {result:false};
-        req.io.emit('entity:list_aptitudes',response);
+        var the_player = _.find(board.players, function (pl) {
+            return (pl.name == target_player_id)
+        });
+
+        var the_entity = _.find(the_player.entities, function (el) {
+            return (el.name == target_entity_id)
+        });
+
+        var aptitudes = _.map(the_entity.aptitudes, function (apt) {
+            return (apt.name)
+        });
+
+        if (aptitudes) {
+            response = {
+                result: true, target_player_id: target_player_id,
+                target_entity_id: target_entity_id,
+                aptitudes: aptitudes
+            }
+        }
+        else response = {result: false};
+        req.io.emit('entity:list_aptitudes', response);
     },
 
-    list_vulnerabilities :function(req){
-         var params = req.data;
+    list_vulnerabilities: function (req) {
+        var params = req.data;
         var target_player_id = params.target_player_id;
         var target_entity_id = params.target_entity_id;
-        var the_player = _.find(board.players,function(pl){return(pl.name == target_player_id)});
-        var the_entity = _.find(the_player.entities,function(el) {return (el.name == target_entity_id)});
-        var vulnerabilities= _.map(the_entity.vulnerabilities,function(vul) {return (vul.name)});
-        if (vulnerabilities)
-        {response = {result:true,
-            target_player_id:target_player_id,
-            target_entity_id:target_entity_id,
-            vulnerabilities:vulnerabilities}}
-            else response = {result:false};
+        var the_player = _.find(board.players, function (pl) {
+            return (pl.name == target_player_id)
+        });
+        var the_entity = _.find(the_player.entities, function (el) {
+            return (el.name == target_entity_id)
+        });
+        var vulnerabilities = _.map(the_entity.vulnerabilities, function (vul) {
+            return (vul.name)
+        });
+        if (vulnerabilities) {
+            response = {
+                result: true,
+                target_player_id: target_player_id,
+                target_entity_id: target_entity_id,
+                vulnerabilities: vulnerabilities
+            }
+        }
+        else response = {result: false};
 
-        req.io.emit('entity:list_vulnerabilities',response);
+        req.io.emit('entity:list_vulnerabilities', response);
     },
 
     buy_aptitude: function (req) {
@@ -137,9 +157,9 @@ app.io.route('entity', {
         his_player_id = params.his_player_id;
         his_entity_id = params.his_entity_id;
         aptitude_id = params.aptitude_id;
-     // do the entity belong to the player ?
+        // do the entity belong to the player ?
         var result = false;
-        var response  = {};
+        var response = {};
         var the_player = _.find(board.players, function (pl) {
             return (pl.name == his_player_id)
         });
@@ -164,16 +184,83 @@ app.io.route('entity', {
 
             }
         }
-    app.io.broadcast('entity:buy_aptitude',{result : result, response : response});
+        app.io.broadcast('entity:buy_aptitude', {result: result, response: response});
+    },
+
+    attack: function (req) {
+        params = req.data;
+        var result = false;
+        var response = {};
+
+        source_player_id = params.source_player_id;
+        source_entity_id = params.source_entity_id;
+        source_aptitude_id = params.source_aptitude_id;
+
+        target_player_id = params.target_player_id;
+        target_entity_id = params.target_entity_id;
+        target_vulnerability_id = params.target_vulnerability_id;
+
+        // is this a valid player id ?
+        source_player = _.find(board.players, function (pl) {
+            return pl.name == source_player_id
+        });
+
+        console.log(source_player_id);
+        console.log(source_player);
+        // is this a valid entity id ?
+        source_entity = _.find(source_player.entities, function (ent) {
+            return ent.name == source_entity_id
+        });
+
+
+        // is this a valid aptitude ?
+        source_aptitude = _.find(rules.all_aptitudes(), function (apt) {
+            return apt.name == source_aptitude_id
+        });
+
+
+        // is this a valid target ?
+
+        target_player = _.find(board.players, function (pl) {
+            return pl.name == target_player_id
+        });
+
+        // is this a valid target entity ?
+
+        target_entity = _.find(source_player.entities, function (ent) {
+            return ent.name == target_entity_id
+        });
+
+
+        // is this a valid target vulnerability ?
+        // is this a valid vulnerability ?
+
+        target_vulnerability = _.find(rules.all_vulnerabilities(), function (vul) {
+            return vul.name == target_vulnerability_id
+        });
+
+        if (source_player && source_entity && source_aptitude &&
+            target_player && target_entity && target_vulnerability &&
+            source_player_id != target_plyer_id) {
+            var the_attack = source_player.attack(source_entity, source_aptitude,
+                target_player, target_entity, target_vulnerability);
+
+            board.add_a_thing(board.attacks, the_attack);
+            result = true;
+            response = the_attack.to_text_fields();
+        }
+
+
+        app.io.broadcast('entity:attack', {result: result, response: response});
+
+
     }
 
 })
 
 
-
-
 app.get('/', function (req, res) {
-    res.sendfile(__dirname + '/client.html')
+    res.sendfile(__dirname + '/client.html');
 })
 
 app.listen(8080);

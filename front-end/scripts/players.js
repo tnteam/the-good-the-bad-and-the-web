@@ -31,7 +31,7 @@ Player.prototype.updateEnemyEntity = function(entity){
         if(this.enemy_entities[i].name == entity.name){
             this.enemy_entities[i] = entity;
             /**
-             * TODO move enemy entity on map
+             * TODO move_to_coords enemy entity on map
              */
         }
     }

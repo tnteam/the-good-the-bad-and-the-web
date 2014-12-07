@@ -48,7 +48,7 @@ var Entity = function(parameters){
  * @param xp
  * @param yp
  */
-Entity.prototype.move = function(xp,yp) {
+Entity.prototype.move_to_coords = function(xp,yp) {
     this.x= this.xp;
     this.y = this.yp;
 };
