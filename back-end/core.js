@@ -1,6 +1,7 @@
 /**
  * Created by rafik-naccache on 06/12/14.
  */
+var game_data = require('game-data');
 var game = require('game');
 var entities = require('entities')
 var players = require('players');
@@ -9,6 +10,13 @@ var utils = require('utils');
 
 var app = require('express.io')();
 var board = new game.Board();
+var  rules = new game_data.init_data();
+
+process.on('uncaughtException', function(err) {
+    // handle the error safely
+    console.log(err);
+});
+
 
 app.http().io();
 
@@ -32,24 +40,25 @@ app.io.route('entity', {
             return (pl.name == his_player_id);
         })
 
-          var result = false;
+        var result = false;
+        var response = {};
         var entity_name = params.name
 
+        var exist_entity = _.some(board.all_entities(),function(ent) {return ent.name == entity_name});
 
-        if (his_player) {
+        if (his_player && !exist_entity) {
             var new_entity = new entities.Entity(params);
             result = his_player.add_entity(new_entity);
 
             if (result) {
+                var ent_t_apts = utils.transform_obj_to_name(new_entity, 'aptitudes');
+                var response_data = utils.transform_obj_to_name(ent_t_apts, 'vulnerabilities');
+                response = {result: result, data: response_data};
                 board.remove_a_thing(board.players, his_player);
                 board.add_a_thing(board.players, his_player);
             }
-        } // needs maybe better handling ?
+        }
 
-        var ent_t_apts = utils.transform_obj_to_name(new_entity, 'aptitudes');
-        var response_data = utils.transform_obj_to_name(ent_t_apts, 'aptitudes');
-
-        response = {result: result, data: response_data};
 
         app.io.broadcast('entity:add', response);
     },
@@ -80,7 +89,7 @@ app.io.route('entity', {
             board.add_a_thing(the_player.entities, the_entity);
         }
         var ent_t_apts = utils.transform_obj_to_name(the_entity, 'aptitudes');
-        var response_data = utils.transform_obj_to_name(ent_t_apts, 'aptitudes');
+        var response_data = utils.transform_obj_to_name(ent_t_apts, 'vulnerabilities');
 
         response = {result: result, data: response_data};
 
@@ -117,9 +126,46 @@ app.io.route('entity', {
             else response = {result:false};
 
         req.io.emit('entity:list_vulnerabilities',response);
+    },
+
+    buy_aptitude: function (req) {
+
+        params = req.data;
+        his_player_id = params.his_player_id;
+        his_entity_id = params.his_entity_id;
+        aptitude_id = params.aptitude_id;
+     // do the entity belong to the player ?
+        var result = false;
+        var response  = {};
+        var the_player = _.find(board.players, function (pl) {
+            return (pl.name == his_player_id)
+        });
+
+        // does it exist ?
+        var the_entity = _.find(the_player.entities, function (ent) {
+            return ent.name == his_entity_id;
+        });
+
+        // yes this is his entity, and it exists
+        if (the_entity) {
+
+            // is this aptitude in the game rules ?
+            var the_aptitude = rules[aptitude_id];
+            if (the_aptitude) {
+                the_entity.buy_aptitude(the_aptitude);
+                var ent_t_apts = utils.transform_obj_to_name(the_entity, 'aptitudes');
+                var response_data = utils.transform_obj_to_name(ent_t_apts, 'vulnerabilities');
+                result = true;
+                response = response_data;
+
+
+            }
+        }
+    app.io.broadcast('entity:buy_aptitude',{result : result, response : response});
     }
 
 })
+
 
 
 

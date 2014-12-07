@@ -54,4 +54,9 @@
         console.log("entity:list_vulnerabilities"+JSON.stringify(data));
     });
 
+    io.emit('entity:buy_aptitude', {his_player_id:'rafikplayer', his_entity_id:'rafikentity',aptitude_id:'buy_stuff'});
+    io.on('entity:buy_aptitude', function(data) {
+        console.log("entiry:buy_aptitudes"+JSON.stringify(data));
+    })
+
 </script>
