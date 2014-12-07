@@ -4,9 +4,9 @@
 
 
 var entities = require('entities');
-var _ = require ('underscore');
 
-describe("A suite", function() {
+
+describe("Entites Test Suite", function() {
     var params = {name:"rafikentity",
             x:10,
             y:20,
@@ -56,7 +56,7 @@ describe("A suite", function() {
     })
     it("if I add vulnearbility I will find it",function() {
 
-        var vuln_ok = new entities.Aptitude({name:"vuln1",
+        var vuln_ok = new entities.Vulnerability({name:"vuln1",
             description:"blah blah 2",
             cost:10});
 
@@ -96,7 +96,7 @@ describe("A suite", function() {
 
         ent.subst_webmana(10)
 
-        expect(ent.webmana).toBe(10);
+
 
 
     })
