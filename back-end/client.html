@@ -40,5 +40,18 @@
 
     io.on('entity:move', function(data) {
         console.log("entity move:" + JSON.stringify((data)));
+
+
     })
+
+    io.emit('entity:list_aptitudes',{target_player_id:'rafikplayer',target_entity_id:'rafikentity'})
+    io.on('entity:list_aptitudes',function(data){
+        console.log("entity:list_aptitudes"+JSON.stringify(data));
+    });
+
+    io.emit('entity:list_vulnerabilities',{target_player_id:'rafikplayer',target_entity_id:'rafikentity'})
+    io.on('entity:list_vulnerabilities',function(data){
+        console.log("entity:list_vulnerabilities"+JSON.stringify(data));
+    });
+
 </script>

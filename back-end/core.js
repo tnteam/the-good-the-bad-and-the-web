@@ -85,9 +85,42 @@ app.io.route('entity', {
         response = {result: result, data: response_data};
 
         app.io.broadcast('entity:move', response);
+    },
+
+    list_aptitudes: function(req){
+        var params = req.data;
+        var target_player_id = params.target_player_id;
+        var target_entity_id = params.target_entity_id;
+        var the_player = _.find(board.players,function(pl){return(pl.name == target_player_id)});
+        var the_entity = _.find(the_player.entities,function(el) {return (el.name == target_entity_id)});
+        var aptitudes= _.map(the_entity.aptitudes,function(apt) {return (apt.name)});
+        if (aptitudes)
+        {response = {result:true, target_player_id:target_player_id,
+            target_entity_id:target_entity_id,
+            aptitudes:aptitudes}}
+            else response = {result:false};
+        req.io.emit('entity:list_aptitudes',response);
+    },
+
+    list_vulnerabilities :function(req){
+         var params = req.data;
+        var target_player_id = params.target_player_id;
+        var target_entity_id = params.target_entity_id;
+        var the_player = _.find(board.players,function(pl){return(pl.name == target_player_id)});
+        var the_entity = _.find(the_player.entities,function(el) {return (el.name == target_entity_id)});
+        var vulnerabilities= _.map(the_entity.vulnerabilities,function(vul) {return (vul.name)});
+        if (vulnerabilities)
+        {response = {result:true,
+            target_player_id:target_player_id,
+            target_entity_id:target_entity_id,
+            vulnerabilities:vulnerabilities}}
+            else response = {result:false};
+
+        req.io.emit('entity:list_vulnerabilities',response);
     }
 
 })
+
 
 
 app.get('/', function (req, res) {
