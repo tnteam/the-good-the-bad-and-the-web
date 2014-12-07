@@ -9,7 +9,7 @@ the internet and how to protect yourself against them.
 
 ## License and Credits
 
-Copyright © 2014 Rafik Naccache, Ibtissem HAMDI and Elyes Ben Zina, TNTeam Rocks!
+Copyright © 2014 Rafik Naccache, Ibtissem HAMDI ,Marwa Sahli, Chakib Daoud and Elyes Ben Zina, TNTeam Rocks!
 Distributed under the GNU GPL v3.
 
 All used Libraries in this project pertain to their
