@@ -22,8 +22,8 @@ describe('players Test Suite', function () {
 
     a_vuln = new entities.Vulnerability({
         name: "vuln",
-        description: "blah blah 2",
-        cost: 10
+        description: "blah blah 2"
+
     });
 
     var rafikentity = new entities.Entity({

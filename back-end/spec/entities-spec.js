@@ -58,7 +58,7 @@ describe("Entites Test Suite", function() {
 
         var vuln_ok = new entities.Vulnerability({name:"vuln1",
             description:"blah blah 2",
-            cost:10});
+            });
 
         var result = ent.add_vulnerability(vuln_ok);
         expect(result).toBe(true);
@@ -72,7 +72,7 @@ describe("Entites Test Suite", function() {
 
         var vuln_ok = new entities.Aptitude({name:"vuln1",
             description:"blah blah 2",
-            cost:10});
+            price:10});
 
         var result = ent.add_vulnerability(vuln_ok);
         expect(result).toBe(false);
