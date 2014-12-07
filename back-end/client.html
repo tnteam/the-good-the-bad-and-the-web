@@ -15,7 +15,7 @@
 
 
     io.on('player:register',function(data){
-        console.info(JSON.stringify(data));
+        console.log("player:register" + JSON.stringify(data));
     })
 
 
@@ -31,8 +31,14 @@
     });
 
     io.on('entity:add',function(data) {
-            console.info(JSON.stringify(data));
+            console.log("entity add:" + JSON.stringify(data));
         })
 
+    io.emit('entity:move',{his_player_id :'rafikplayer',
+        name:'rafikentity',
+        x:10, y:15})
 
+    io.on('entity:move', function(data) {
+        console.log("entity move:" + JSON.stringify((data)));
+    })
 </script>
