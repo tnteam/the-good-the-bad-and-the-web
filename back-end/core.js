@@ -86,7 +86,6 @@ app.io.route('entity', {
         if (the_entity) {
             result = true;
             the_entity.move_to_coords(params.x, params.y);
-            console.log('new coords :' + the_entity.x + ',' + the_entity.y);
 
         }
         var ent_t_apts = utils.transform_obj_to_name(the_entity, 'aptitudes');
@@ -205,19 +204,18 @@ app.io.route('entity', {
             return pl.name == source_player_id
         });
 
-        console.log(source_player_id);
         console.log(source_player);
         // is this a valid entity id ?
         source_entity = _.find(source_player.entities, function (ent) {
             return ent.name == source_entity_id
         });
-
+        console.log(source_entity);
 
         // is this a valid aptitude ?
         source_aptitude = _.find(rules.all_aptitudes(), function (apt) {
             return apt.name == source_aptitude_id
         });
-
+        console.log(source_aptitude);
 
         // is this a valid target ?
 
@@ -225,12 +223,13 @@ app.io.route('entity', {
             return pl.name == target_player_id
         });
 
+        console.log(target_player);
         // is this a valid target entity ?
 
-        target_entity = _.find(source_player.entities, function (ent) {
+        target_entity = _.find(target_player.entities, function (ent) {
             return ent.name == target_entity_id
         });
-
+        console.log(target_entity);
 
         // is this a valid target vulnerability ?
         // is this a valid vulnerability ?
@@ -238,20 +237,24 @@ app.io.route('entity', {
         target_vulnerability = _.find(rules.all_vulnerabilities(), function (vul) {
             return vul.name == target_vulnerability_id
         });
+        console.log(target_vulnerability);
 
         if (source_player && source_entity && source_aptitude &&
             target_player && target_entity && target_vulnerability &&
-            source_player_id != target_plyer_id) {
+            source_player_id != target_player_id
+
+            ) {
             var the_attack = source_player.attack(source_entity, source_aptitude,
                 target_player, target_entity, target_vulnerability);
 
-            board.add_a_thing(board.attacks, the_attack);
+           if (game.validate_attack(the_attack).valid) {
+            utils.add_a_thing(board.attacks,the_attack);
             result = true;
-            response = the_attack.to_text_fields();
+            response={};
+        //    response = the_attack.to_text_fields();
         }
-
-
-        app.io.broadcast('entity:attack', {result: result, response: response});
+        }
+      app.io.broadcast('entity:attack', {result: result, response: response});
 
 
     }
@@ -260,7 +263,7 @@ app.io.route('entity', {
 
 
 app.get('/', function (req, res) {
-    res.sendfile(__dirname + '/client.html');
+    res.sendfile(__dirname + '/game.html');
 })
 
 app.listen(8080);
