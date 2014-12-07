@@ -16,10 +16,11 @@ app.io.route('player', {
         var player = new players.Player(params);
         var result = board.add_a_thing(board.players, player);
         var response = {result: result, name: player.name};
-        req.io.emit('players:register:result', response)
+        console.log(response);
+        req.io.emit('player:register', response)
     }
 });
-
+/*
 app.io.route('entity', {
     add: function (req) {
         var params = req.data;
@@ -39,7 +40,7 @@ app.io.route('entity', {
             req.io.emit('entity:add:result', response)
         }
     }
-})
+})*/
 
 
 

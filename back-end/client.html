@@ -6,25 +6,17 @@
     io.emit('player:register',{
                 name: "rafik",
                 game_id: "game1",
-                entities: [rafikentity],
                 webmana: 20
               });
 
 
     // result : event : entity:add, {result : true, name ; rafikentity}
-    io.emit('entity:add',{name:"rafikentity",
-                x:10,
-                y:20,
-                is_serverp : true,
-                is_goodp : false,
-                aptitudes :[],
-                vulnerabilities:[],
-                webmana:20,
-                his_player_id:"rafikplayer"
-            }
 
-    )
-io.on('players:register:result', function(data) {
-    alert(data)
-})
+
+    io.on('player:register',function(data){
+        console.info(JSON.stringify(data));
+    })
+
+
+
 </script>
