@@ -27,6 +27,7 @@ app.io.route('player', {
         var result = board.add_a_thing(board.players, player);
         var response = {result: result, data: utils.transform_obj_to_name(player,'entities')};
 
+
         app.io.broadcast('player:register', response)
     }
 });
@@ -47,6 +48,8 @@ app.io.route('entity', {
         var exist_entity = _.some(board.all_entities(),function(ent) {return ent.name == entity_name});
 
         if (his_player && !exist_entity) {
+            params.vulnerabilities = _.sample(rules.all_vulnerabilities(),3);
+
             var new_entity = new entities.Entity(params);
             result = his_player.add_entity(new_entity);
 
