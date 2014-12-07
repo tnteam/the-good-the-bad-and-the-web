@@ -2,6 +2,7 @@
  * Created by rafik-naccache on 06/12/14.
  */
 var game = require('game');
+var entities = require('entities')
 var players = require('players');
 var _ = require('underscore');
 
@@ -20,14 +21,22 @@ app.io.route('player', {
         req.io.emit('player:register', response)
     }
 });
-/*
+
 app.io.route('entity', {
     add: function (req) {
         var params = req.data;
         var his_player_id = params.his_player_id;
+
         var his_player = _.find(board.players, function (pl) {
-            pl.name == his_player_id
+            return (pl.name == his_player_id);
         })
+
+        console.log('board.players: '+board.players[0].name);
+
+        var result=false;
+        var entity_name = params.name
+
+        console.log('hisplayer '+his_player.name);
         if (his_player) {
             var new_entity = new entities.Entity(params);
             result = his_player.add_entity(new_entity);
@@ -36,11 +45,15 @@ app.io.route('entity', {
                 board.remove_a_thing(board.players, his_player);
                 board.add_a_thing(board.players, his_player);
             }
-            response = {result: result, name: entity.name}
-            req.io.emit('entity:add:result', response)
-        }
+        } // needs maybe better handling ?
+
+        response = {result : result, name : entity_name};
+        console.log(response);
+        req.io.emit('entity:add', response);
     }
-})*/
+
+
+})
 
 
 
