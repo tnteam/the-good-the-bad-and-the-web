@@ -5,7 +5,7 @@ Our entry to Koding Gobal Hackathon 2014-A wargame to make you learn about the t
 the internet and how to protect yourself against them.
 
 ## What is it like ?
-![a screenshot](screensho.png)
+![a screenshot](screenshot.png)
 This is basically intended to be a startegy game. The internet out there is full of good and bad guys fighting to gain webmana points trying as hard as they can.
 
 ## The rules
