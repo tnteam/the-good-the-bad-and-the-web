@@ -2,6 +2,10 @@
 <script>
     io = io.connect()
 
+    // pour lancer la boucle du jeu...
+    io.emit('game:start');
+
+
 
     io.emit('player:register',{
                 name: "rafikplayer",
