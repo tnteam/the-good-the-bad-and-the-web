@@ -22,7 +22,11 @@ app.http().io();
 app.io.route('player', {
     register: function (req) {
         var params = req.data;
-        var player = new players.Player(params);
+        var name = params.name;
+        var game_id = params.game_id;
+        var webmana = parseInt(params.webmana);
+        var player_params = {name : name,game_id:game_id,entities:[],webmana :webmana};
+        var player = new players.Player(player_params);
         var result = board.add_player(player);
         var response = {result: result, data: utils.transform_obj_to_name(player, 'entities')};
         app.io.broadcast('player:register', response);
@@ -330,8 +334,24 @@ app.io.route('entity', {
 
         }
         app.io.broadcast('entity:transact', {result: result, response: response});
-    }
+    },
 
+    defend: function (req) {
+        params = req.data;
+        attack_id = params.attack_id;
+        defense_aptitude_id = params.defense_aptitude_id;
+
+        var result =false;
+        var response = {};
+
+        the_attack = _.find(board.attacks,function(att){return (att.name == attack_id)});
+        the_defense = _.find(rules.all_aptitudes(),function(def){return(def.name == defense_aptitude_id)});
+        if (the_attack && the_defense) {
+
+        }
+
+
+    }
 
 })
 
