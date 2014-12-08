@@ -6,15 +6,12 @@ var buy_item, buy_apt, io;
 window.onload = function() {
     var game = new Phaser.Game(1100, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render:render });
     var gameEntities = {}, attackLine, defendLine;
-    var text, player_id, player_credit;
+    var text, player_id, player_credit = 20, credit, menu ;
     var button_play;
     var button_about;
     var button_options;
     var map;
     var logo;
-    var bot;
-    var bot2;
-    var bot3;
     var group_nuages;
     var account = 100;
     var selectedApitude = 'ssl';
@@ -30,7 +27,15 @@ window.onload = function() {
         steal_user_photos:'Steal user photos',
         user_read_fine_prints:'Read fine prints',
         steal_user_password:'Steal user password',
-        steal_sensitive_data:'Steal sensitive data'
+        steal_sensitive_data:'Steal sensitive data',
+        user_using_weak_passwords:'Using weak passwords', 
+        user_use_non_tracing_services:'Using non tracing services', 
+        user_updates_patches:'Use update patches',
+        user_not_crypting_emails: 'Using no crypting emails',
+        user_use_two_factor_auth:'Using two auth factors',
+        user_using_gpg:'Using gpg',
+        user_not_doing_update:'Not doing updates',
+        user_non_rights_aware:'Being not aware of rights'
     };
     var lineDefend, lineAttak;
     function preload() {
@@ -52,6 +57,9 @@ window.onload = function() {
         game.load.image('logo', './front-end/assets/logo.png');
         game.load.audio('music', ['./front-end/assets/narutu.mp3', './front-end/assets/bodenstaendig_2000_in_rock_4bit.ogg']);
         game.load.image('aptitude','./front-end/assets/4.png');
+        game.load.image('vul','./front-end/assets/danger.png');
+        game.load.image('serveur01', './front-end/assets/serveur01.png');
+        game.load.image('serveur02', './front-end/assets/serveur02.png');
         //game.load.spritesheet('player','player.png');
     }
 
@@ -75,14 +83,22 @@ window.onload = function() {
     }
 
     function create () {
-        //io = io.connect();
-        //setIoHandlers(io);
+        io = io.connect();
+        io.emit('player:register',{
+                name: Math.random().toString(36).substr(2, 5),
+                entities:[],
+                game_id: "game1",
+                webmana: 20
+              });
+        setIoHandlers(io);
         game.physics.startSystem(Phaser.Physics.ARCADE);
+
         //redimentionnement de la carte du jeu
         game.world.setBounds(0, 0, 10050, 6000);
         //chargent de la texture de la map
         land = game.add.tileSprite(0, 0, 10000, 6000, 'map');
         //le logo qui tourne ;) logo.kill(); tue le logo pour le faire disparitre de l'ecran
+        credit = game.add.text(10, 5, "Your webmana is: " + player_credit.toString(), {font: "16px Arial", fill: "#000"});
         logo = game.add.sprite(950, 450, 'logo');
         //le centre de la rotaion
         logo.anchor.setTo(0.5, 0.5);
@@ -91,48 +107,24 @@ window.onload = function() {
         logo.scale.y = 0.3;
         music = game.add.audio('music');
         music.play();
-        //ajout des joueurs
-        bot = game.add.sprite(200, 200, 'player');
-        bot.anchor.set(0.5);
-        bot3 = game.add.sprite(600, 200, 'player3');
-        bot3.anchor.set(0.5);
-        bot2 = game.add.sprite(400, 200, 'player2');
-        bot2.anchor.set(0.5);
         group_nuages = game.add.group();
-
-        //  Here we add a new animation called 'run'
-        //  We haven't specified any frames because it's using every frame in the texture atlas
-        //ajouter une animation au joueurs
-        bot.animations.add('fly');
-        bot3.animations.add('angry');
-        bot2.animations.add('run');
-
-        //  And this starts the animation playing by using its key ("run")
-        //  15 is the frame rate (15fps)
-        //  true means it will loop when it finishes
-        //mettre les animation a play= jouer en definisson le nabre d'image par seconde "6"
-        bot.animations.play('fly', 6, true);
-        bot3.animations.play('angry', 6, true);
-        bot2.animations.play('run', 6, true);
         cursors = game.input.keyboard.createCursorKeys();
-
-
         //  Scaled buttons
-        //  Scaled button
-        buttons = createMenu(20, 20);
+        //buttons = createMenu(20, 20);
 
     }
     var setIoHandlers = function(io){
         // result : event : entity:add, {result : true, name ; rafikentity}
         io.on('player:register',function(data){
-            if(data.result == true)
-                player_id = data.name;
-
-            console.log("player:register" + JSON.stringify(data));
+            if(data.result == true && data.data){
+                player_id = data.data.name;
+                player_credit = data.data.webmana;
+            }
         });
 
         io.on('entity:add',function(data) {
-            createEntity(data);
+            if(data.result  && data.data != {})
+                createEntity(data.data);
         });
 
         io.on('entity:move', function(data) {
@@ -153,18 +145,23 @@ window.onload = function() {
 
         io.on('entity:attack', function(data) {
             createAttack(data);
-            console.log("entity:attack"+JSON.stringify(data));
         });
+
         io.on('player:webmana_modif', function(data) {
-            console.log("player:modifscore"+JSON.stringify(data));
             updatePlayerSore(data);
+        });
+
+        io.on('info:aptitudes', function(data) {
+            console.log("info:aptitudes"+JSON.stringify(data));
         });
 
     }
     function createMenu(ptX,ptY){
-        var i = 0, menu = [];
+        var i = 0;
+        var menu = [];
         for (var x in aptitudes) {
             var duck = game.add.group();
+
             duck.x = ptX;
             duck.y = ptY+(40*i);
             i++;
@@ -173,8 +170,10 @@ window.onload = function() {
             //d.anchor.setTo(0.5, 0.5);
             d.name = aptitudes[x];
             var t = game.add.text(40,2,aptitudes[x]);
+
             duck.add(d);
             duck.add(t);
+            duck.backgroundColor = "#000";
             menu.push(duck);
         }
         return menu;
@@ -184,6 +183,7 @@ window.onload = function() {
     }
     function button_play_fct () {
     }
+
     function update(){
         logo.angle += 1;
 
@@ -206,6 +206,7 @@ window.onload = function() {
             game.camera.x += 4;
         }
     }
+
     buy_item = function(is_client, is_bad, family){
         if(account > 5){
             // Buy item
@@ -220,8 +221,9 @@ window.onload = function() {
                 his_player_id:player_id
             });
         }
-        else alert("Insufficient credit !");
+        else alert("Insufficient webmana !");
     }
+
     buy_apt = function(selected_entity_id, aptitude_id){
         // Buy aptitude
         io.emit('entity:buy_aptitude',
@@ -232,10 +234,40 @@ window.onload = function() {
     }
 
     function createEntity(entity){
-        var text = game.add.text(5, -15, entity.webmana.toString(), {font: "16px Arial", fill: "#ffffff"});
-        var sprite = game.add.sprite(entity.x, entity.y, entity.family);
+        var family;
+        if(entity.is_goodp == true && entity.is_serverp == true)
+            family = 'serveur01';
+        else if(entity.is_goodp == false && entity.is_serverp == true)
+            family = 'serveur02';
+        else if(entity.is_goodp == false && entity.is_serverp == false)
+            family = 'player3';
+        else
+            family = 'player';
+        var sprite = game.add.sprite(entity.x, entity.y, family);
         sprite.inputEnabled = true;
-        sprite.events.onInputDown.add(requestNewAttack, this);
+        if(entity.his_player_id == player_id){
+            sprite.events.onInputDown.add(displayMenu, this);
+        }
+        if(entity.is_serverp == true)
+            sprite.scale.setTo(0.1, 0.1);
+
+        sprite.anchor.set(0.5);
+        if(family=='player3'){
+            sprite.animations.add('angry');
+            sprite.animations.play('angry', 6, true);
+        }
+
+        if(family=='player'){
+            //sprite.anchor.set(0.5);
+            sprite.animations.add('fly');
+            sprite.animations.play('fly', 6, true);
+        }
+
+        if(entity.is_serverp == true)
+            var text = game.add.text(50, -10, entity.webmana.toString(), {font: "16px Arial", fill: "#000"});
+        else
+            var text = game.add.text(25, -10, entity.webmana.toString(), {font: "16px Arial", fill: "#000"});
+
         sprite.addChild(text);
         sprite.name = entity.name;
         if(entity.his_player_id == player_id){
@@ -245,7 +277,7 @@ window.onload = function() {
             sprite.events.onDragStop.add(stopDrag, this);
         }
         gameEntities[entity.name] = {sprite:sprite, entity:entity, text:text, attacks:[], defends: []};
-        updatePlayerScore(entity.webmana);
+        updatePlayerScore(entity);
     }
 
     function startDrag(sprite, pointer){
@@ -266,6 +298,51 @@ window.onload = function() {
                 gameEntities[data.target].sprite.x, gameEntities[data.target].sprite.y);
             //attackLine.fromSprite(gameEntities[data.source].sprite, gameEntities[data.target].sprite, false);
             gameEntities[data.source].attacks.push(attackLine);
+        }
+    }
+
+    function displayMenu(sprite, pointer){
+        attackLine = new Phaser.Line(sprite.x, sprite.y, sprite.x +50, sprite.y+50);
+        var i = 0, apt;
+         menu = [];
+        for (var x in gameEntities[sprite.name].entity.aptitudes) {
+            var duck = game.add.group();
+            duck.x = sprite.x + 50;
+            duck.y = sprite.y+(20*i);
+            i++;
+            apt = gameEntities[sprite.name].entity.aptitudes[x];
+            var d = game.add.button(0,0, 'aptitude', changeAptitude,duck);
+            d.scale.setTo(0.3, 0.3);
+            //d.anchor.setTo(0.5, 0.5);
+            d.name = aptitudes[apt];
+            var t = game.add.text(10, 2, aptitudes[apt],{font: "12px Arial", fill: "#000"});
+            duck.add(d);
+            duck.add(t);
+            menu.push(duck);
+        }
+
+        for (var x in gameEntities[sprite.name].entity.vulnerabilities) {
+            var duck = game.add.group();
+            duck.x = sprite.x + 50;
+            duck.y = sprite.y+(20*i);
+            i++;
+            apt = gameEntities[sprite.name].entity.vulnerabilities[x];
+            var d = game.add.button(0,0, 'vul', changeAptitude,duck);
+            d.scale.setTo(0.3, 0.3);
+            //d.anchor.setTo(0.5, 0.5);
+            d.name = gameEntities[sprite.name].entity.vulnerabilities[x];
+            var t = game.add.text(10, 2,aptitudes[apt], {font: "12px Arial", fill: "#000"});
+            duck.add(d);
+            duck.add(t);
+            menu.push(duck);
+        }
+        game.input.onDown.add(unpause, self);
+        return menu;
+    }
+
+    function unpause(){
+        for(var i in menu){
+            menu[i].destroy();
         }
     }
 
@@ -303,10 +380,11 @@ window.onload = function() {
         }
     }
 
-    function updatePlayerScore(webmana_modif){
+    function updatePlayerScore(data){
         //{player_id:"rafikplayer",webmana_modif:-5}
-        if(data.player_id == player_id){
-            player_credit = player_credit + webmana_modif;
+        if(data.his_player_id == player_id){
+            player_credit = player_credit - data.webmana;
+            credit.setText("Your webmana is: "+ player_credit);
         }
 
     }
@@ -322,7 +400,7 @@ window.onload = function() {
         }
     }
     function render(){
-        game.debug.geom(attackLine);
-        game.debug.rectangle(attackLine);
+        //game.debug.geom(attackLine);
+        //game.debug.rectangle(attackLine);
     }
 };
