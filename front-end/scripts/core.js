@@ -84,6 +84,7 @@ window.onload = function() {
 
     function create () {
         io = io.connect();
+        io.emit('game:start',{});
         io.emit('player:register',{
                 name: Math.random().toString(36).substr(2, 5),
                 entities:[],
