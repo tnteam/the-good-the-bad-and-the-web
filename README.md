@@ -5,7 +5,7 @@ Our entry to Koding Gobal Hackathon 2014-A wargame to make you learn about the t
 the internet and how to protect yourself against them.
 
 ## What is it like ?
-![a screenshot](./screenshot.png)
+<img src="./logo.png">
 This is basically intended to be a startegy game. The internet out there is full of good and bad guys fighting to gain webmana points trying as hard as they can.
 
 ## The rules
@@ -14,6 +14,8 @@ Everyone can join. When he enters the game, he is awarded an original amount of 
 By making transaction, every part of it gain equal amount of webmana.
 
 entities have aptitudes and vulnerabilities.
+
+<img src="./thegood.png" align="right">
 
 entities can make transactions using each one compatible attributes, make attack using aptitude fitting a particular vulnerability, or defend againt an attack, using an aptitude to do so.
 
@@ -30,8 +32,8 @@ The game eternally drills a fixed amout of webmana from all the entities. This i
 The entity that hits 0 webmana bottomline is considered out of service.
 
 Last player standing gets it all.
+<img src="/serveur.png">
 
-If an attacked good pal makes a defense
 
 
 ## License and Credits
