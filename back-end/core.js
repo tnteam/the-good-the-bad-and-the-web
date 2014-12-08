@@ -11,10 +11,10 @@ var app = require('express.io')();
 var board = new game.Board();
 var rules = new game_data.init_data();
 
-/*process.on('uncaughtException', function (err) {
+process.on('uncaughtException', function (err) {
     // handle the error safely
     console.log(err);
-});*/
+});
 
 
 app.http().io();
@@ -339,7 +339,7 @@ app.io.route('entity', {
 
     defend: function (req) {
         params = req.data;
-        target_player_id = params.target_player_id;
+
         attack_id = params.attack_id;
         defense_aptitude_id = params.defense_aptitude_id;
 
@@ -348,6 +348,9 @@ app.io.route('entity', {
 
         the_attack = _.find(board.attacks,function(att){return (att.name == attack_id)});
         the_defense_aptitude = _.find(rules.all_aptitudes(),function(def){return(def.name == defense_aptitude_id)});
+
+        if (!the_attack || the_defense_aptitude) return;
+           target_player_id = the_attack.source_player.name;
         target_player = _.find(board.players,function(pl){return (pl.name == target_player_id)});
         if (target_player &&the_attack && the_defense_aptitude) {
           var defense = target_player.defend(the_attack,the_defense_aptitude);
@@ -357,11 +360,19 @@ app.io.route('entity', {
                 response = {name:defense.name,attack:the_attack.name,defense_aptitude:the_defense_aptitude};
             }
         }
-
-        app.io.broadcast('entity:defend', {result: result, response: response});
+            app.io.broadcast('entity:defend', {result: result, response: response});
     }
 
+});
+
+app.io.route('info',{
+    aptitudes : function(req){
+        var apts = rules.all_aptitudes();
+        req.io.emit('info:aptitudes',{aptitudes:apts})
+    }
 })
+
+
 
 // TO DELETE
 app.get('/', function (req, res) {

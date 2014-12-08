@@ -121,5 +121,19 @@
         console.log("entity:transact"+JSON.stringify(data));
     });
 
+    io.emit('entity:defend',
+            {
+                attack_id:'rafikplayer:rafikentity:steal_sensitive_data->elyesplayer:elyesentity:user_not_crypting_emails',
+                defense_aptitude_id : 'user_use_gpg'
+            });
+
+    io.on('entity:defend', function(data) {
+        console.log("entity:defend"+JSON.stringify(data));
+    });
+
+    io.emit('info:aptitudes',{})
+     io.on('info:aptitudes', function(data) {
+        console.log("info:aptitudes"+JSON.stringify(data));
+    });
 
 </script>
