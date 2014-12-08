@@ -59,8 +59,9 @@ app.io.route('entity', {
             if (result) {
                 var ent_t_apts = utils.transform_obj_to_name(new_entity, 'aptitudes');
                 var response_data = utils.transform_obj_to_name(ent_t_apts, 'vulnerabilities');
-                response = {result: result, data: response_data};
+
             }
+            response = {result: result, data: response_data};
         }
 
         app.io.broadcast('entity:add', response);
@@ -338,6 +339,7 @@ app.io.route('entity', {
 
     defend: function (req) {
         params = req.data;
+        target_player_id = params.target_
         attack_id = params.attack_id;
         defense_aptitude_id = params.defense_aptitude_id;
 
@@ -347,7 +349,7 @@ app.io.route('entity', {
         the_attack = _.find(board.attacks,function(att){return (att.name == attack_id)});
         the_defense = _.find(rules.all_aptitudes(),function(def){return(def.name == defense_aptitude_id)});
         if (the_attack && the_defense) {
-
+         //   var defense =
         }
 
 
