@@ -339,7 +339,7 @@ app.io.route('entity', {
 
     defend: function (req) {
         params = req.data;
-        target_player_id = params.target_
+        target_player_id = params.target_player_id;
         attack_id = params.attack_id;
         defense_aptitude_id = params.defense_aptitude_id;
 
@@ -347,12 +347,18 @@ app.io.route('entity', {
         var response = {};
 
         the_attack = _.find(board.attacks,function(att){return (att.name == attack_id)});
-        the_defense = _.find(rules.all_aptitudes(),function(def){return(def.name == defense_aptitude_id)});
-        if (the_attack && the_defense) {
-         //   var defense =
+        the_defense_aptitude = _.find(rules.all_aptitudes(),function(def){return(def.name == defense_aptitude_id)});
+        target_player = _.find(board.players,function(pl){return (pl.name == target_player_id)});
+        if (target_player &&the_attack && the_defense_aptitude) {
+          var defense = target_player.defend(the_attack,the_defense_aptitude);
+            if (defense && game.validate_defense(defense).valid) {
+                result=true;
+                utils.add_a_thing(board.defenses,defense);
+                response = {name:defense.name,attack:the_attack.name,defense_aptitude:the_defense_aptitude};
+            }
         }
 
-
+        app.io.broadcast('entity:defend', {result: result, response: response});
     }
 
 })
