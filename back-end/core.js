@@ -382,8 +382,18 @@ app.io.route('info', {
 app.io.route('game', {
     start: function (req) {
 
+        setInterval(function(){
+
+            //j'enleve 1 du webmana de tout le monde toutes les 30 secondes
+            var all_entities = board.all_entities();
+            _.map(all_entities,function(ent){ent.webmana--;})
+        },30000);
+
         setInterval(function () {
-            console.log('tick')
+
+
+
+
             var defended_attacks = _.map(board.defenses, function (def) {
                 def.attack
             });

@@ -5,6 +5,17 @@
     // pour lancer la boucle du jeu...
     io.emit('game:start');
 
+//les évènements
+  /*  io.on('game:webmana', {
+        source: 'entity1', source_webmana: 5,
+        target: 'entity2', target_webmana: 4
+    } -> mettre à jour avec les nouvelles valeurs (màj, pas somme)
+
+('game:attack-finished', 'ra:f:f->fs:f:f') -> info que l'attaque est finie)
+
+
+
+*/
 
 
     io.emit('player:register',{
