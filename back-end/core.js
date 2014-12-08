@@ -7,7 +7,6 @@ var entities = require('entities')
 var players = require('players');
 var _ = require('underscore');
 var utils = require('utils');
-
 var app = require('express.io')();
 var board = new game.Board();
 var rules = new game_data.init_data();
@@ -48,6 +47,7 @@ app.io.route('entity', {
 
         if (his_player && !exist_entity) {
             params.vulnerabilities = _.sample(rules.all_vulnerabilities(), 3);
+
 
             var new_entity = new entities.Entity(params);
             result = his_player.add_entity(new_entity);
@@ -204,18 +204,18 @@ app.io.route('entity', {
             return pl.name == source_player_id
         });
 
-        console.log(source_player);
+
         // is this a valid entity id ?
         source_entity = _.find(source_player.entities, function (ent) {
             return ent.name == source_entity_id
         });
-        console.log(source_entity);
+
 
         // is this a valid aptitude ?
         source_aptitude = _.find(rules.all_aptitudes(), function (apt) {
             return apt.name == source_aptitude_id
         });
-        console.log(source_aptitude);
+
 
         // is this a valid target ?
 
@@ -223,13 +223,13 @@ app.io.route('entity', {
             return pl.name == target_player_id
         });
 
-        console.log(target_player);
+
         // is this a valid target entity ?
 
         target_entity = _.find(target_player.entities, function (ent) {
             return ent.name == target_entity_id
         });
-        console.log(target_entity);
+
 
         // is this a valid target vulnerability ?
         // is this a valid vulnerability ?
@@ -237,34 +237,37 @@ app.io.route('entity', {
         target_vulnerability = _.find(rules.all_vulnerabilities(), function (vul) {
             return vul.name == target_vulnerability_id
         });
-        console.log(target_vulnerability);
 
         if (source_player && source_entity && source_aptitude &&
             target_player && target_entity && target_vulnerability &&
             source_player_id != target_player_id
 
-            ) {
+        ) {
             var the_attack = source_player.attack(source_entity, source_aptitude,
                 target_player, target_entity, target_vulnerability);
 
-           if (game.validate_attack(the_attack).valid) {
-            utils.add_a_thing(board.attacks,the_attack);
-            result = true;
-            response={};
-        //    response = the_attack.to_text_fields();
+            if (game.validate_attack(the_attack).valid) {
+                utils.add_a_thing(board.attacks, the_attack);
+                result = true;
+                response = {
+                    name: the_attack.name, source_player: the_attack.source_player.name,
+                    source_entity: the_attack.source_entity.name, source_aptitude: the_attack.source_aptitude.name,
+                    target_player: the_attack.target_player.name,
+                    target_entity: the_attack.target_entity.name,
+                    target_vulnerability:the_attack.target_vulnerability.name
+            }
         }
-        }
-      app.io.broadcast('entity:attack', {result: result, response: response});
-
-
     }
+    app.io.broadcast('entity:attack', {result: result, response: response});
+
+}
+
 
 })
-
-
 app.get('/', function (req, res) {
-    res.sendfile(__dirname + '/game.html');
+    res.sendfile(__dirname + '/test-api.html')
 })
+
 
 app.listen(8080);
 

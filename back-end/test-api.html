@@ -72,9 +72,11 @@
         console.log("entity:list_vulnerabilities"+JSON.stringify(data));
     });
 
-    io.emit('entity:buy_aptitude', {his_player_id:'rafikplayer', his_entity_id:'rafikentity',aptitude_id:'steal_sensitive_data'});
+    io.emit('entity:buy_aptitude', {his_player_id:'rafikplayer', his_entity_id:'rafikentity',
+        aptitude_id:'steal_sensitive_data'});
 
-    io.emit('entity:buy_aptitude', {his_player_id:'elyesplayer', his_entity_id:'elyesentity',aptitude_id:'user_use_gpg'});
+    io.emit('entity:buy_aptitude', {his_player_id:'elyesplayer', his_entity_id:'elyesentity',
+        aptitude_id:'user_use_gpg'});
 
     io.on('entity:buy_aptitude', function(data) {
         console.log("entiry:buy_aptitudes"+JSON.stringify(data));
