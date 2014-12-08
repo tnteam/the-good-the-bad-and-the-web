@@ -11,10 +11,10 @@ var app = require('express.io')();
 var board = new game.Board();
 var rules = new game_data.init_data();
 
-process.on('uncaughtException', function (err) {
+/*process.on('uncaughtException', function (err) {
     // handle the error safely
     console.log(err);
-});
+});*/
 
 
 app.http().io();
@@ -46,12 +46,11 @@ app.io.route('entity', {
         });
 
         if (his_player && !exist_entity) {
-            params.vulnerabilities = _.sample(rules.all_vulnerabilities(), 3);
 
+            params.vulnerabilities = _.sample(rules.all_vulnerabilities(), 3);
 
             var new_entity = new entities.Entity(params);
             result = his_player.add_entity(new_entity);
-
 
             if (result) {
                 var ent_t_apts = utils.transform_obj_to_name(new_entity, 'aptitudes');
@@ -59,7 +58,6 @@ app.io.route('entity', {
                 response = {result: result, data: response_data};
             }
         }
-
 
         app.io.broadcast('entity:add', response);
     },
@@ -240,13 +238,12 @@ app.io.route('entity', {
 
         if (source_player && source_entity && source_aptitude &&
             target_player && target_entity && target_vulnerability &&
-            source_player_id != target_player_id
+            source_player_id != target_player_id) {
 
-        ) {
             var the_attack = source_player.attack(source_entity, source_aptitude,
                 target_player, target_entity, target_vulnerability);
 
-            if (game.validate_attack(the_attack).valid) {
+            if (the_attack && game.validate_attack(the_attack).valid) {
                 utils.add_a_thing(board.attacks, the_attack);
                 result = true;
                 response = {
@@ -260,14 +257,89 @@ app.io.route('entity', {
     }
     app.io.broadcast('entity:attack', {result: result, response: response});
 
-}
+},
+
+    transact: function(req) {
+        params = req.data;
+        var result = false;
+            var response = {};
+        source_player_id = params.source_player_id;
+        source_entity_id = params.source_entity_id;
+        source_aptitude_id = params.source_aptitude_id;
+
+        target_player_id = params.target_player_id;
+        target_entity_id = params.target_entity_id;
+        target_aptitude_id = params.target_aptitude_id;
+
+        // is this a valid player id ?
+        source_player = _.find(board.players, function (pl) {
+            return pl.name == source_player_id
+        });
+
+
+        // is this a valid entity id ?
+        source_entity = _.find(source_player.entities, function (ent) {
+            return ent.name == source_entity_id
+        });
+
+
+        // is this a valid aptitude ?
+        source_aptitude = _.find(rules.all_aptitudes(), function (apt) {
+            return apt.name == source_aptitude_id
+        });
+
+
+        // is this a valid target ?
+
+        target_player = _.find(board.players, function (pl) {
+            return pl.name == target_player_id
+        });
+
+
+        // is this a valid target entity ?
+
+        target_entity = _.find(target_player.entities, function (ent) {
+            return ent.name == target_entity_id
+        });
+
+
+        // is this a valid target vulnerability ?
+        // is this a valid vulnerability ?
+
+        target_aptitude = _.find(rules.all_aptitudes(), function (vul) {
+            return vul.name == target_aptitude_id
+        });
+
+        if (source_player && source_entity &&
+            source_aptitude && target_player &&
+            target_entity && target_aptitude &&
+        source_player_id != target_player_id) {
+            var the_transact = source_player.transact(source_entity,source_aptitude_id,
+                target_player,target_entity,target_aptitude);
+            if (the_transact && game.validate_transact(the_transact).valid) {
+                result = true
+                utils.add_a_thing(board.transacts,the_transact);
+                response  = {name:the_transact.name, source_player:source_player_id,
+                source_entity: source_entity_id,
+                source_aptitude : source_aptitude_id,
+                target_player:target_player_id,
+                    target_entity:target_entity_id,
+                    target_aptitude : target_aptitude_id
+                }
+            }
+
+        }
+        app.io.broadcast('entity:transact', {result: result, response: response});
+    }
 
 
 })
+
+// TO DELETE
 app.get('/', function (req, res) {
     res.sendfile(__dirname + '/test-api.html')
 })
-
+//TO DELETE
 
 app.listen(8080);
 

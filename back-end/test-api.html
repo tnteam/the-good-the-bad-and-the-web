@@ -97,4 +97,17 @@
     });
 
 
+    io.emit('entity:transact',
+            {source_player_id:'rafikplayer',
+                source_entity: 'rafikentity',
+                source_aptitude_id:'ssl_crypt',
+                target_player_id :'elyesplayer',
+                target_entity_id:'elyesentity',
+                target_aptitude:'ssl_decrypt'});
+
+    io.on('entity:transact', function(data) {
+        console.log("entity:transact"+JSON.stringify(data));
+    });
+
+
 </script>
