@@ -1,6 +1,6 @@
 The Good, The Bad and The Web
 ============================
-
+[Unfortuneatly, we were not able to make it to the end, the game was too complicated to be done in two days, anyway, that was fun and back end is good enough so tnteam can carry on with it later, thank you!]
 Our entry to Koding Gobal Hackathon 2014-A wargame to make you learn about the threats of
 the internet and how to protect yourself against them.
 
